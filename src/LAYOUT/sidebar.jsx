@@ -4,6 +4,8 @@ import { Link, useLocation, useMatch } from "react-router-dom";
 export default function Sidebar() {
 	const location = useLocation();
 
+	const { pathname } = useLocation();
+
 	const dashboardMatch = useMatch("/dashboard/*");
 	const thusoMatch = useMatch("/thuso/*");
 	const subjectsMatch = useMatch("/subjects/*");
@@ -19,8 +21,8 @@ export default function Sidebar() {
 				<h1 className="text-2xl">WELI</h1>
 			</div>
 			<ul className="px-2 mt-[5dvh]">
-				<Link to="/dashboard">
-					<li className={`flex gap-2 py-2 px-2 rounded-md ${getActiveClass(dashboardMatch)} `}>
+				<Link to="/">
+					<li className={`flex gap-2 py-2 px-2 rounded-md ${pathname == "/" ? "bg-[#0496ff] text-white shadowed-btn" : "text-gray-700 hover:text-green-600"} `}>
 
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
