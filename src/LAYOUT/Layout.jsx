@@ -6,7 +6,7 @@ import Navbar from "./navbar";
 const Layout = () => {
 	return (
 		<div className="min-h-screen w-full flex flex-col">
-			<header className="w-full  shadow-lg z-40 ">
+			<header className="w-full bg-white  shadow-lg z-40 ">
 				<Navbar />
 			</header>
 

@@ -13,7 +13,7 @@ import {
 
 export default function Navbar() {
 	return (
-		<div className="fixed  top-0 left-0 right-0    me-4 py-2 px-4 my-2 rounded w-full ">
+		<div className="fixed bg-white  top-0 left-0 right-0    me-4 py-2 px-4 my-2 rounded w-full ">
 
 			<div className="flex justify-end">
 				<div>
