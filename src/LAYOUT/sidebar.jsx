@@ -17,10 +17,8 @@ export default function Sidebar() {
 
 	return (
 		<aside className="w-full bg-white p-3 h-full">
-			<div className="text-center">
-				<h1 className="text-2xl">WELI</h1>
-			</div>
-			<ul className="px-2 mt-[5dvh]">
+
+			<ul className="px-2 ">
 				<Link to="/">
 					<li className={`flex gap-2 py-2 px-2 rounded-md ${pathname == "/" ? "bg-[#0496ff] text-white shadowed-btn" : "text-gray-700 hover:text-green-600"} `}>
 

@@ -1,11 +1,11 @@
 import { Button } from "@nextui-org/react"
+import { Link } from "react-router-dom"
 
-const Navbar = () => {
+const LandingNavbar = () => {
     return (
-        <nav>
+        <nav className="bg-white">
             <div className="flex justify-between py-4 px-4">
                 <div className="logo">
-                    Logo here
                 </div>
                 <div className="flex gap-5">
                     <ul className="flex gap-5 mt-3">
@@ -14,7 +14,8 @@ const Navbar = () => {
                         <li>About</li>
                     </ul>
                     <div className="flex gap-2">
-                        <Button className="bg-[#0496ff]  text-white py-2 px-[2.5rem] rounded-full shadowed-btn">Sign up</Button>
+                        <Link to="/signup">  <Button className="bg-[#0496ff]  text-white py-2 px-[2.5rem] rounded-full shadowed-btn">Sign up</Button></Link>
+                        <Link to="/signin"><Button className="bg-[#0496ff]  text-white py-2 px-[2.5rem] rounded-full shadowed-btn">Sign In</Button></Link>
                     </div>
                 </div>
             </div>
@@ -22,4 +23,4 @@ const Navbar = () => {
     )
 }
 
-export default Navbar
+export default LandingNavbar 

@@ -52,10 +52,13 @@
     "@nextui-org/theme": "^2.2.9",
     "@nextui-org/tooltip": "^2.0.39",
     "@nextui-org/user": "^2.0.33",
+    "chart.js": "^4.4.4",
+    "firebase": "^10.13.1",
     "framer-motion": "^11.5.4",
     "nextui-cli": "^0.3.4",
     "npx": "^10.2.2",
     "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1"
   },
