@@ -1,11 +1,35 @@
 
 import { Image } from "@nextui-org/image";
+import { useAuth } from "../../PROVIDERS/DataProvider";
+import { useParams } from "react-router-dom";
+
+const subjectsList = [
+	{ name: 'Mathematics', id: 0, image: "https://stock.adobe.com/search?k=maths" },
+	{ name: 'Mathematical Literacy', id: 1, image: "https://www.facebook.com/p/Grade-12-Mathematical-Literacy-Group-100063798530983/" },
+	{ name: 'Physical Sciences', id: 2, image: "https://www.pexels.com/search/physics/" },
+	{ name: 'Geography', id: 3, image: "https://www.freepik.com/vectors/geography-subject" },
+	{ name: 'History', id: 4, image: "https://www.gostudy.net/career-guidance/subject-choice---history" },
+	{ name: 'Business Studies', id: 5, image: "https://www.geeksforgeeks.org/business-studies/" },
+	{ name: 'Economics', id: 6, image: "https://www.freepik.com/premium-vector/school-subject-doodle-economics_148610493.htm" },
+	{ name: 'Accounting', id: 7, image: "https://www.fiverr.com/malikwaseemawan/do-online-teaching-of-accounting-subjects" },
+	{ name: 'English Home Language', id: 8, image: "https://www.pinterest.com/pin/english-subject-illustration-vector-download--596234438187479057/" },
+];
+
 
 export default function Subject() {
+
+	const { subjectID } = useParams(); // Get the subject from the URL
+	const { currentUser } = useAuth()
+	const subject = subjectsList.find((subject) => subject.id == subjectID);
+
+
+
+
+
 	return (
 		<section>
 			<div>
-				<p className="text-3xl">Mathematics</p>
+				<p className="text-3xl">{subject.name}</p>
 				<p className="text-tiny text-gray-400">
 					Building the Foundations of Logic and Reasoning
 				</p>

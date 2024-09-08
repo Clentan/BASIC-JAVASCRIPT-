@@ -29,7 +29,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/thuso" element={<Thuso />} />
             <Route path="/subjects" element={<Subjects />} />
-            <Route path="/subject" element={<Subject />} />
+            <Route path="/subjects/:subjectID" element={<Subject />} />
             <Route path="/forums" element={<Forums />} />
             <Route path="/forums/:id" element={<Forum />} />
             <Route path="/addforum" element={<AddForum />} />
