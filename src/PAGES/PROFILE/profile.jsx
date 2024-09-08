@@ -5,18 +5,17 @@ import { db } from "../../DATABASE/firebase";
 import { useAuth } from "../../PROVIDERS/DataProvider";
 
 const subjectsList = [
-	'Mathematics',
-	'Mathematical Literacy',
-	'Physical Sciences',
-	'Life Sciences',
-	'Geography',
-	'History',
-	'Business Studies',
-	'Economics',
-	'Accounting',
-	'English Home Language',
-	'Afrikaans First Additional Language',
-	'IsiZulu First Additional Language'
+	{ name: 'Mathematics', id: 0 },
+	{ name: 'Mathematical Literacy', id: 1 },
+	{ name: 'Physical Sciences', id: 2 },
+	{ name: 'Geography', id: 3 },
+	{ name: 'History', id: 4 },
+	{ name: 'Business Studies', id: 5 },
+	{ name: 'Economics', id: 6 },
+	{ name: 'Accounting', id: 7 },
+	{ name: 'English Home Language', id: 8 },
+	{ name: 'Afrikaans First Additional Language', id: 9 },
+	{ name: 'IsiZulu First Additional Language', id: 10 },
 ];
 
 const StudentPage = () => {
@@ -53,15 +52,17 @@ const StudentPage = () => {
 			},
 		}));
 	};
-
 	const handleSubjectChange = (e) => {
 		const { value, checked } = e.target;
+		const subjectId = parseInt(value, 10);
 		setFormData((prev) => {
 			const subjects = [...prev.grade.subjects];
 			if (checked) {
-				subjects.push(value);
+				if (!subjects.includes(subjectId)) {
+					subjects.push(subjectId);
+				}
 			} else {
-				const index = subjects.indexOf(value);
+				const index = subjects.indexOf(subjectId);
 				if (index > -1) {
 					subjects.splice(index, 1);
 				}
@@ -181,6 +182,7 @@ const StudentPage = () => {
 				)}
 			</div>
 
+
 			{/* Grade Section */}
 			<div className="mb-6">
 				<h2 className="text-xl font-semibold mb-4">Grade</h2>
@@ -201,15 +203,15 @@ const StudentPage = () => {
 							<label className="block text-sm font-medium mb-1">Select Subjects</label>
 							<div className="space-y-2">
 								{subjectsList.map((subject) => (
-									<div key={subject} className="flex items-center">
+									<div key={subject.id} className="flex items-center">
 										<input
 											type="checkbox"
-											value={subject}
-											checked={formData.grade.subjects.includes(subject)}
+											value={subject.id}
+											checked={formData.grade.subjects.includes(subject.id)}
 											onChange={handleSubjectChange}
 											className="mr-2"
 										/>
-										<label>{subject}</label>
+										<label>{subject.name}</label>
 									</div>
 								))}
 							</div>
@@ -234,11 +236,14 @@ const StudentPage = () => {
 							<p><strong>Selected Subjects:</strong></p>
 							<ul className="list-disc pl-5">
 								{formData.grade.subjects.length > 0 ? (
-									formData.grade.subjects.map((subject, index) => (
-										<li key={index} className="mb-1">
-											{subject}
-										</li>
-									))
+									formData.grade.subjects.map((subjectId) => {
+										const subject = subjectsList.find(s => s.id === subjectId);
+										return (
+											<li key={subjectId} className="mb-1">
+												{subject ? subject.name : 'Unknown Subject'}
+											</li>
+										);
+									})
 								) : (
 									<li>No subjects selected</li>
 								)}
@@ -253,6 +258,7 @@ const StudentPage = () => {
 					</>
 				)}
 			</div>
+
 		</div>
 	);
 };

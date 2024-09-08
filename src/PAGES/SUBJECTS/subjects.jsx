@@ -6,46 +6,32 @@ import {
 	Image,
 	Button,
 } from "@nextui-org/react";
+import { useAuth } from "../../PROVIDERS/DataProvider";
+
+
+const subjectsList = [
+	{ name: 'Mathematics', id: 0, image: "" },
+	{ name: 'Mathematical Literacy', id: 1, image: "" },
+	{ name: 'Physical Sciences', id: 2, image: "" },
+	{ name: 'Geography', id: 3, image: "" },
+	{ name: 'History', id: 4, image: "" },
+	{ name: 'Business Studies', id: 5, image: "" },
+	{ name: 'Economics', id: 6, image: "" },
+	{ name: 'Accounting', id: 7, image: "" },
+	{ name: 'English Home Language', id: 8, image: "" },
+	{ name: 'Afrikaans First Additional Language', id: 9, image: "" },
+	{ name: 'IsiZulu First Additional Language', id: 10, image: "" },
+];
+
 
 
 export default function Subjects() {
-	const subjects = [
-		{
-			id: 101,
-			name: "Mathematics",
-			description: "Covers topics such as algebra, geometry, calculus, and statistics, focusing on problem-solving and critical thinking."
-		},
-		{
-			id: 102,
-			name: "Physical Science",
-			description: "Focuses on the study of physics and chemistry, exploring concepts such as matter, energy, and chemical reactions."
-		},
-		{
-			id: 103,
-			name: "Life Sciences",
-			description: "Studies biological systems, organisms, ecology, and genetics, emphasizing human and environmental biology."
-		},
-		{
-			id: 104,
-			name: "Geography",
-			description: "Examines the physical features of the Earth and human societies, covering topics like climate, ecosystems, and urban development."
-		},
-		{
-			id: 105,
-			name: "History",
-			description: "Explores key historical events, figures, and movements, with a focus on South Africa, Africa, and world history."
-		},
-		{
-			id: 106,
-			name: "English Home Language",
-			description: "Focuses on language, literature, comprehension, and writing skills, helping learners develop proficiency in English."
-		},
-		{
-			id: 107,
-			name: "Afrikaans First Additional Language",
-			description: "Teaches Afrikaans as a second language, focusing on communication, grammar, reading, and writing."
-		}
-	];
+	const { currentUser } = useAuth()
+	const userSubjects = subjectsList.filter((subject) => currentUser.grade.subjects.includes(subject.id));
+
+
+	const subs = currentUser.grade.subjects
+	console.log(subs)
 
 	return (
 		<section>
@@ -55,7 +41,7 @@ export default function Subjects() {
 					<p className="text-gray-400">Delve into a wide range of topics, with videos and resources to enhance your learning journey.</p>
 				</div>
 				<div className="grid grid-cols-12 gap-5">
-					{subjects.map(subject => (
+					{userSubjects.map(subject => (
 						<Card isFooterBlurred className="w-full h-[300px] col-span-3" key={subject.id}>
 							<Image
 								removeWrapper

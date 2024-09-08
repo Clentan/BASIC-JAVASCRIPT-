@@ -28,7 +28,7 @@ export default function Forums() {
 
 	return (
 		<div className="">
-			<h1 className="text-3xl font-bold mb-6">Matric<span className="text-mygreen">IQ</span> Forums</h1>
+			<h1 className="text-3xl font-bold mb-6">Forums</h1>
 
 			<div className="mb-6">
 				<input
