@@ -1,8 +1,36 @@
 
+import { Image } from "@nextui-org/image";
 import { Link, useLocation, useMatch } from "react-router-dom";
+// import { driver } from "driver.js";
+// import "driver.js/dist/driver.css";
+import { Button } from "@nextui-org/button";
+import { useState } from "react";
 
 export default function Sidebar() {
+
+	const [show, setShow] = useState(true);
+
+
+	/*	const driverObj = driver({
+			showProgress: true,
+			steps: [
+				{ element: '#confirm-destroy-example', popover: { title: 'Animated Tour Example', description: 'Here is the code example showing animated tour. Let\'s walk you through it.', side: "left", align: 'start' }},
+				{ element: 'code .line:nth-child(1)', popover: { title: 'Import the Library', description: 'It works the same in vanilla JavaScript as well as frameworks.', side: "bottom", align: 'start' }},
+				{ element: 'code .line:nth-child(2)', popover: { title: 'Importing CSS', description: 'Import the CSS which gives you the default styling for popover and overlay.', side: "bottom", align: 'start' }},
+				{ popover: { title: 'Happy Coding', description: 'And that is all, go ahead and start adding tours to your applications.' } }
+			],
+			// onDestroyStarted is called when the user tries to exit the tour
+			onDestroyStarted: () => {
+				if (!driverObj.hasNextStep() || confirm("Are you sure?")) {
+				driverObj.destroy();
+				setShow(false)
+				}
+			},
+			});
+						*/
+
 	const location = useLocation();
+
 
 	const { pathname } = useLocation();
 
@@ -12,21 +40,65 @@ export default function Sidebar() {
 	const forumsMatch = useMatch("/forums/*");
 	const activityMatch = useMatch("/activity/*");
 
-	const getActiveClass = (match) => (match ? "bg-[#0496ff] text-white shadowed-btn" : "text-gray-700 hover:text-green-600");
+	const getActiveClass = (match) =>
+		match
+			? "bg-[#0496ff] text-white shadowed-btn"
+			: "text-gray-700 hover:text-green-600";
 	const DashboardIcon = (match) => (match ? "white" : "black");
 
 	return (
-		<aside className="w-full bg-white p-3 h-full">
+		<aside className="w-full bg-white px-3 h-full">
+			<div className="text-center mb-3 flex justify-center">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					width={48}
+					height={48}
+					color={"#000000"}
+					fill={"none"}
+				>
+					<path
+						d="M2 8C2 9.34178 10.0949 13 11.9861 13C13.8772 13 21.9722 9.34178 21.9722 8C21.9722 6.65822 13.8772 3 11.9861 3C10.0949 3 2 6.65822 2 8Z"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+					<path
+						d="M5.99414 11L6.23925 16.6299C6.24415 16.7426 6.25634 16.8555 6.28901 16.9635C6.38998 17.2973 6.57608 17.6006 6.86 17.8044C9.08146 19.3985 14.8901 19.3985 17.1115 17.8044C17.3956 17.6006 17.5816 17.2973 17.6826 16.9635C17.7152 16.8555 17.7274 16.7426 17.7324 16.6299L17.9774 11"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+					<path
+						d="M20.4734 9.5V16.5M20.4734 16.5C19.6814 17.9463 19.3312 18.7212 18.9755 20C18.8983 20.455 18.9596 20.6843 19.2732 20.8879C19.4006 20.9706 19.5537 21 19.7055 21H21.2259C21.3876 21 21.5507 20.9663 21.6838 20.8745C21.9753 20.6735 22.0503 20.453 21.9713 20C21.6595 18.8126 21.2623 18.0008 20.4734 16.5Z"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+				</svg>
+				<p className="text-[#0496ff] text-4xl mt-1">
+					<span className="text-red-500">W</span>ELI
+				</p>
+			</div>
 
 			<ul className="px-2 ">
 				<Link to="/">
-					<li className={`flex gap-2 py-2 px-2 rounded-md ${pathname == "/" ? "bg-[#0496ff] text-white shadowed-btn" : "text-gray-700 hover:text-green-600"} `}>
+					<li
+						className={`flex gap-2 py-2 px-2 rounded-md ${pathname == "/"
+							? "bg-[#0496ff] text-white shadowed-btn"
+							: "text-gray-700 hover:text-green-600"
+							} animate__animated animate__fadeInLeft`}
+						id="home"
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 24 24"
 							width={20}
 							height={20}
-							color="black"
+							color={DashboardIcon}
 							fill={"none"}
 						>
 							<path
@@ -51,75 +123,88 @@ export default function Sidebar() {
 							/>
 						</svg>
 
-
 						<div className="text-lg">Dashboard</div>
 					</li>
 				</Link>
+
+				{/*
 				<Link to="/thuso">
-					<li className={`flex gap-1 my-3 ${getActiveClass(thusoMatch)}`}>
+					<li
+						className={`flex gap-1 my-3 ${getActiveClass(
+							thusoMatch
+						)} rounded-md animate__animated animate__fadeInLeft animate__slow`}
+						id="thuso"
+					>
 						<div className="mt-1 py-2 px-2">
-							{/* Thuso Icon */}
 
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 24 24"
-								width={20}
-								height={20}
-								color={"#000000"}
-								fill={"none"}
-							>
-								<path
-									d="M11 8H13C15.8284 8 17.2426 8 18.1213 8.87868C19 9.75736 19 11.1716 19 14C19 16.8284 19 18.2426 18.1213 19.1213C17.2426 20 15.8284 20 13 20H12C12 20 11.5 22 8 22C8 22 9 20.9913 9 19.9827C7.44655 19.9359 6.51998 19.7626 5.87868 19.1213C5 18.2426 5 16.8284 5 14C5 11.1716 5 9.75736 5.87868 8.87868C6.75736 8 8.17157 8 11 8Z"
-									stroke="currentColor"
-									strokeWidth="1.5"
-									strokeLinejoin="round"
-								/>
-								<path
-									d="M19 11.5H19.5C20.4346 11.5 20.9019 11.5 21.25 11.701C21.478 11.8326 21.6674 12.022 21.799 12.25C22 12.5981 22 13.0654 22 14C22 14.9346 22 15.4019 21.799 15.75C21.6674 15.978 21.478 16.1674 21.25 16.299C20.9019 16.5 20.4346 16.5 19.5 16.5H19"
-									stroke="currentColor"
-									strokeWidth="1.5"
-									strokeLinejoin="round"
-								/>
-								<path
-									d="M5 11.5H4.5C3.56538 11.5 3.09808 11.5 2.75 11.701C2.52197 11.8326 2.33261 12.022 2.20096 12.25C2 12.5981 2 13.0654 2 14C2 14.9346 2 15.4019 2.20096 15.75C2.33261 15.978 2.52197 16.1674 2.75 16.299C3.09808 16.5 3.56538 16.5 4.5 16.5H5"
-									stroke="currentColor"
-									strokeWidth="1.5"
-									strokeLinejoin="round"
-								/>
-								<path
-									d="M13.5 3.5C13.5 4.32843 12.8284 5 12 5C11.1716 5 10.5 4.32843 10.5 3.5C10.5 2.67157 11.1716 2 12 2C12.8284 2 13.5 2.67157 13.5 3.5Z"
-									stroke="currentColor"
-									strokeWidth="1.5"
-								/>
-								<path
-									d="M12 5V8"
-									stroke="currentColor"
-									strokeWidth="1.5"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
-								<path
-									d="M9 12V13M15 12V13"
-									stroke="currentColor"
-									strokeWidth="1.5"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
-								<path
-									d="M10 16.5C10 16.5 10.6667 17 12 17C13.3333 17 14 16.5 14 16.5"
-									stroke="currentColor"
-									strokeWidth="1.5"
-									strokeLinecap="round"
-								/>
-							</svg>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					width={20}
+					height={20}
+					color={"#000000"}
+					fill={"none"}
+				>
+					<path
+						d="M11 8H13C15.8284 8 17.2426 8 18.1213 8.87868C19 9.75736 19 11.1716 19 14C19 16.8284 19 18.2426 18.1213 19.1213C17.2426 20 15.8284 20 13 20H12C12 20 11.5 22 8 22C8 22 9 20.9913 9 19.9827C7.44655 19.9359 6.51998 19.7626 5.87868 19.1213C5 18.2426 5 16.8284 5 14C5 11.1716 5 9.75736 5.87868 8.87868C6.75736 8 8.17157 8 11 8Z"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinejoin="round"
+					/>
+					<path
+						d="M19 11.5H19.5C20.4346 11.5 20.9019 11.5 21.25 11.701C21.478 11.8326 21.6674 12.022 21.799 12.25C22 12.5981 22 13.0654 22 14C22 14.9346 22 15.4019 21.799 15.75C21.6674 15.978 21.478 16.1674 21.25 16.299C20.9019 16.5 20.4346 16.5 19.5 16.5H19"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinejoin="round"
+					/>
+					<path
+						d="M5 11.5H4.5C3.56538 11.5 3.09808 11.5 2.75 11.701C2.52197 11.8326 2.33261 12.022 2.20096 12.25C2 12.5981 2 13.0654 2 14C2 14.9346 2 15.4019 2.20096 15.75C2.33261 15.978 2.52197 16.1674 2.75 16.299C3.09808 16.5 3.56538 16.5 4.5 16.5H5"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinejoin="round"
+					/>
+					<path
+						d="M13.5 3.5C13.5 4.32843 12.8284 5 12 5C11.1716 5 10.5 4.32843 10.5 3.5C10.5 2.67157 11.1716 2 12 2C12.8284 2 13.5 2.67157 13.5 3.5Z"
+						stroke="currentColor"
+						strokeWidth="1.5"
+					/>
+					<path
+						d="M12 5V8"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+					<path
+						d="M9 12V13M15 12V13"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					/>
+					<path
+						d="M10 16.5C10 16.5 10.6667 17 12 17C13.3333 17 14 16.5 14 16.5"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinecap="round"
+					/>
+				</svg>
+			</div>
+			<div className="text-lg mt-2">Thuso</div>
+		</li>
+				</Link >
 
 
-						</div>
-						<div className="text-lg mt-2">Thuso</div>
-					</li>
-				</Link>
-				<Link to="/subjects">
-					<li className={`flex gap-1 my-3 ${getActiveClass(subjectsMatch)}`}>
+*/}
+
+
+				< Link to="/subjects" >
+					<li
+						className={`flex gap-1 my-3 ${getActiveClass(
+							subjectsMatch
+						)} rounded-md animate__animated animate__fadeInLeft animate__slower`}
+						id="subjects"
+					>
 						<div className="mt-1 py-2 px-2">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -142,14 +227,19 @@ export default function Sidebar() {
 									strokeWidth="1.5"
 									strokeLinecap="round"
 								/>
-							</svg>						</div>
+							</svg>
+						</div>
 						<div className="text-lg mt-2">Subjects</div>
 					</li>
-				</Link>
+				</Link >
 				<Link to="/forums">
-					<li className={`flex gap-1 my-3 ${getActiveClass(forumsMatch)}`}>
+					<li
+						className={`flex gap-1 my-3 ${getActiveClass(
+							forumsMatch
+						)} rounded-md rounded-md animate__animated animate__fadeInLeft animate__slower`}
+						id="forums"
+					>
 						<div className="mt-1 py-2 px-2">
-							{/* Forums Icon */}
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 24 24"
@@ -172,16 +262,19 @@ export default function Sidebar() {
 									strokeLinecap="round"
 								/>
 							</svg>
-
-
 						</div>
 						<div className="text-lg mt-2">Forums</div>
 					</li>
-				</Link>
+				</Link >
+
+
 				<Link to="/activity">
-					<li className={`flex gap-1 my-3 ${getActiveClass(activityMatch)}`}>
+					<li
+						className={`flex gap-1 my-3 ${getActiveClass(
+							activityMatch
+						)} rounded-md rounded-md animate__animated animate__fadeInLeft animate__slower`}
+					>
 						<div className="mt-1 py-2 px-2">
-							{/* Activity Icon */}
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 24 24"
@@ -205,15 +298,22 @@ export default function Sidebar() {
 									strokeLinejoin="round"
 								/>
 							</svg>
-
-
-
 						</div>
 						<div className="text-lg mt-2">Activity</div>
 					</li>
-				</Link>
-			</ul>
-		</aside>
+				</Link >
+			</ul >
+			<div>
+				<div className="flex justify-center absolute bottom-0 ms-3 mb-5">
+					<div className="text-center">
+						<Image
+							src="https://img.freepik.com/premium-vector/realistic-3d-cartoon-man-with-laptop_960117-3191.jpg?w=740"
+							className="h-[20dvh] object-cove ms-10"
+						/>
+						<p className="text-2xl font-semibold">Let's <span className="bg-[##0496ff]">grow</span>  Together.</p>
+					</div>
+				</div>
+			</div>
+		</aside >
 	);
 }
-

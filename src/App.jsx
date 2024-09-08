@@ -15,6 +15,7 @@ import { AuthProvider } from "./PROVIDERS/DataProvider";
 import AddForum from "./PAGES/FORUMS/addForum";
 import Challanges from "./PAGES/ACTIVITY/challanges";
 import Profile from "./PAGES/PROFILE/profile";
+import Subject from "./PAGES/SUBJECTS/subject";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/thuso" element={<Thuso />} />
             <Route path="/subjects" element={<Subjects />} />
+            <Route path="/subject" element={<Subject />} />
             <Route path="/forums" element={<Forums />} />
             <Route path="/forums/:id" element={<Forum />} />
             <Route path="/addforum" element={<AddForum />} />

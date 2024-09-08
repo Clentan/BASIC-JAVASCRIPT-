@@ -9,7 +9,7 @@ import { db } from "../../DATABASE/firebase";
 export default function Forum() {
 	const { id } = useParams();
 	const { currentUser } = useAuth();
-	const user = currentUser
+	const user = currentUser.personalInfo
 	const [forum, setForum] = useState(null);
 	const [posts, setPosts] = useState([]);
 	const [newMessage, setNewMessage] = useState("");
@@ -76,9 +76,9 @@ export default function Forum() {
 				{posts.map((post) => (
 					<div
 						key={post.id}
-						className={`mb-2 rounded flex ${post.user === `${user.name}` ? "justify-end" : "justify-start"}`}
+						className={`mb-2 rounded flex ${post.user === `${user.username}` ? "justify-end" : "justify-start"}`}
 					>
-						<div className={`max-w-xs p-2 ${post.user === `${user.name}` ? "bg-blue-100" : "bg-gray-100"}`}>
+						<div className={`max-w-xs p-2 ${post.user === `${user.username}` ? "bg-blue-100" : "bg-gray-100"}`}>
 							<p className="font-semibold">{post.user}:</p>
 							<p>{post.content}</p>
 						</div>

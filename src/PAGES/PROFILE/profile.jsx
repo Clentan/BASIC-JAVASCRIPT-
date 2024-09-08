@@ -1,12 +1,26 @@
 
-
 import { doc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import { db } from "../../DATABASE/firebase";
 import { useAuth } from "../../PROVIDERS/DataProvider";
 
+const subjectsList = [
+	'Mathematics',
+	'Mathematical Literacy',
+	'Physical Sciences',
+	'Life Sciences',
+	'Geography',
+	'History',
+	'Business Studies',
+	'Economics',
+	'Accounting',
+	'English Home Language',
+	'Afrikaans First Additional Language',
+	'IsiZulu First Additional Language'
+];
+
 const StudentPage = () => {
-	const { currentUser } = useAuth()
+	const { currentUser } = useAuth();
 	const [formData, setFormData] = useState({
 		personalInfo: {
 			firstName: '',
@@ -14,28 +28,15 @@ const StudentPage = () => {
 			dob: '01/01/2000',
 			gender: 'Male',
 		},
-		academicResults: {
-			term1Results: { subject: 'Math', grade: 'A' },
-			term2Results: { subject: 'Science', grade: 'B' },
-			term3Results: { subject: 'History', grade: 'A' },
-			term4Results: { subject: 'Geography', grade: 'C' },
-		},
-		careerGoals: {
-			shortTermGoals: { description: 'Pass all exams', targetDate: '31/12/2024' },
-			longTermGoals: { description: 'Become a software engineer', targetDate: '31/12/2030' },
-		},
-		additionalInfo: {
-			extracurricularActivities: 'Basketball, Coding Club',
-			hobbiesAndInterests: 'Reading, Traveling',
-			academicAchievements: 'Top of the class in Math and Science',
-		},
+		grade: {
+			subjects: [], // Array of selected subjects
+			grade: '' // Single grade input for all subjects
+		}
 	});
 
 	const [editMode, setEditMode] = useState({
 		personalInfo: false,
-		academicResults: false,
-		careerGoals: false,
-		additionalInfo: false,
+		grade: false,
 	});
 
 	const toggleEditMode = (section) => {
@@ -53,26 +54,39 @@ const StudentPage = () => {
 		}));
 	};
 
+	const handleSubjectChange = (e) => {
+		const { value, checked } = e.target;
+		setFormData((prev) => {
+			const subjects = [...prev.grade.subjects];
+			if (checked) {
+				subjects.push(value);
+			} else {
+				const index = subjects.indexOf(value);
+				if (index > -1) {
+					subjects.splice(index, 1);
+				}
+			}
+			return {
+				...prev,
+				grade: {
+					...prev.grade,
+					subjects
+				}
+			};
+		});
+	};
+
 	useEffect(() => {
 		if (currentUser) {
-			// If userDataProvider is available, set formData with the fetched user data
 			setFormData({
-				...formData,
-				personalInfo: currentUser.personalInfo,
+				personalInfo: currentUser.personalInfo || formData.personalInfo,
+				grade: {
+					subjects: currentUser.grade?.subjects || [],
+					grade: currentUser.grade?.grade || ''
+				}
 			});
 		}
 	}, [currentUser]);
-
-	const handleDateChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name.split('.')[0]]: {
-				...prev[name.split('.')[0]],
-				[name.split('.')[1]]: value,
-			},
-		}));
-	};
 
 	const handleSave = async (section) => {
 		console.log(`${section} Data:`, formData[section]);
@@ -80,7 +94,7 @@ const StudentPage = () => {
 
 		const userRef = doc(db, "users", currentUser.uid);
 		await updateDoc(userRef, {
-			[`${section}`]: formData[section]
+			[section]: formData[section]
 		});
 	};
 
@@ -117,7 +131,7 @@ const StudentPage = () => {
 								type="text"
 								name="personalInfo.dob"
 								value={formData.personalInfo.dob}
-								onChange={handleDateChange}
+								onChange={handleChange}
 								placeholder="DD/MM/YYYY"
 								className="w-full p-2 border rounded-md shadow-sm"
 							/>
@@ -153,10 +167,9 @@ const StudentPage = () => {
 					<>
 						<div className="p-2 border rounded-md shadow-sm bg-gray-100 mb-4">
 							<p><strong>First Name:</strong> {formData.personalInfo.firstName}</p>
-							<p><strong>Last Name:</strong> {formData.personalInfo.surname}</p>
+							<p><strong>Surname:</strong> {formData.personalInfo.surname}</p>
 							<p><strong>Date of Birth:</strong> {formData.personalInfo.dob}</p>
 							<p><strong>Gender:</strong> {formData.personalInfo.gender}</p>
-							<p><strong>Email:</strong> {formData.personalInfo.email}</p>
 						</div>
 						<button
 							onClick={() => toggleEditMode('personalInfo')}
@@ -168,40 +181,48 @@ const StudentPage = () => {
 				)}
 			</div>
 
-			{/* Academic Results */}
+			{/* Grade Section */}
 			<div className="mb-6">
-				<h2 className="text-xl font-semibold mb-4">Academic Results</h2>
-				{editMode.academicResults ? (
+				<h2 className="text-xl font-semibold mb-4">Grade</h2>
+				{editMode.grade ? (
 					<>
-						{['term1Results', 'term2Results', 'term3Results', 'term4Results'].map((term, index) => (
-							<div key={term} className="mb-4">
-								<label className="block text-sm font-medium mb-1">{`Term ${index + 1} Subject`}</label>
-								<input
-									type="text"
-									name={`${term}.subject`}
-									value={formData.academicResults[term].subject}
-									onChange={handleChange}
-									className="w-full p-2 border rounded-md shadow-sm"
-								/>
-								<label className="block text-sm font-medium mt-2 mb-1">{`Term ${index + 1} Grade`}</label>
-								<input
-									type="text"
-									name={`${term}.grade`}
-									value={formData.academicResults[term].grade}
-									onChange={handleChange}
-									className="w-full p-2 border rounded-md shadow-sm"
-								/>
+						<div className="mb-4">
+							<label className="block text-sm font-medium mb-1">Grade for All Selected Subjects</label>
+							<input
+								type="text"
+								name="grade.grade"
+								value={formData.grade.grade}
+								onChange={handleChange}
+								className="w-full p-2 border rounded-md shadow-sm"
+								placeholder="Enter grade"
+							/>
+						</div>
+						<div className="mb-4">
+							<label className="block text-sm font-medium mb-1">Select Subjects</label>
+							<div className="space-y-2">
+								{subjectsList.map((subject) => (
+									<div key={subject} className="flex items-center">
+										<input
+											type="checkbox"
+											value={subject}
+											checked={formData.grade.subjects.includes(subject)}
+											onChange={handleSubjectChange}
+											className="mr-2"
+										/>
+										<label>{subject}</label>
+									</div>
+								))}
 							</div>
-						))}
+						</div>
 						<button
-							onClick={() => toggleEditMode('academicResults')}
-							className="bg-green-600 text-white px-4 py-2 rounded-md shadow mt-4 hover:bg-green-800 transition-colors"
+							onClick={() => toggleEditMode('grade')}
+							className="bg-blue-600 text-white px-4 py-2 rounded-md shadow mt-4 hover:bg-blue-800 transition-colors"
 						>
 							Cancel
 						</button>
 						<button
-							onClick={() => handleSave('academicResults')}
-							className="bg-green-600 text-white px-4 py-2 rounded-md shadow mt-2 ml-2 hover:bg-green-800 transition-colors"
+							onClick={() => handleSave('grade')}
+							className="bg-blue-600 text-white px-4 py-2 rounded-md shadow mt-2 ml-2 hover:bg-blue-800 transition-colors"
 						>
 							Save
 						</button>
@@ -209,157 +230,23 @@ const StudentPage = () => {
 				) : (
 					<>
 						<div className="p-2 border rounded-md shadow-sm bg-gray-100 mb-4">
-							{['term1Results', 'term2Results', 'term3Results', 'term4Results'].map((term, index) => (
-								<p key={term}>
-									<strong>{`Term ${index + 1} - Subject: `}</strong> {formData.academicResults[term].subject}
-									<br />
-									<strong>{`Grade: `}</strong> {formData.academicResults[term].grade}
-								</p>
-							))}
+							<p><strong>Grade for All Selected Subjects:</strong> {formData.grade.grade || 'N/A'}</p>
+							<p><strong>Selected Subjects:</strong></p>
+							<ul className="list-disc pl-5">
+								{formData.grade.subjects.length > 0 ? (
+									formData.grade.subjects.map((subject, index) => (
+										<li key={index} className="mb-1">
+											{subject}
+										</li>
+									))
+								) : (
+									<li>No subjects selected</li>
+								)}
+							</ul>
 						</div>
 						<button
-							onClick={() => toggleEditMode('academicResults')}
-							className="bg-green-600 text-white px-4 py-2 rounded-md shadow mt-4 hover:bg-green-800 transition-colors"
-						>
-							Edit
-						</button>
-					</>
-				)}
-			</div>
-
-			{/* Career Goals */}
-			<div className="mb-6">
-				<h2 className="text-xl font-semibold mb-4">Career Goals</h2>
-				{editMode.careerGoals ? (
-					<>
-						<div className="mb-4">
-							<label className="block text-sm font-medium mb-1">Short-Term Goals Description</label>
-							<textarea
-								name="careerGoals.shortTermGoals.description"
-								value={formData.careerGoals.shortTermGoals.description}
-								onChange={handleChange}
-								className="w-full p-2 border rounded-md shadow-sm"
-							/>
-							<label className="block text-sm font-medium mt-2 mb-1">Target Completion Date</label>
-							<input
-								type="text"
-								name="careerGoals.shortTermGoals.targetDate"
-								value={formData.careerGoals.shortTermGoals.targetDate}
-								onChange={handleDateChange}
-								placeholder="DD/MM/YYYY"
-								className="w-full p-2 border rounded-md shadow-sm"
-							/>
-						</div>
-						<div className="mb-4">
-							<label className="block text-sm font-medium mb-1">Long-Term Goals Description</label>
-							<textarea
-								name="careerGoals.longTermGoals.description"
-								value={formData.careerGoals.longTermGoals.description}
-								onChange={handleChange}
-								className="w-full p-2 border rounded-md shadow-sm"
-							/>
-							<label className="block text-sm font-medium mt-2 mb-1">Target Completion Date</label>
-							<input
-								type="text"
-								name="careerGoals.longTermGoals.targetDate"
-								value={formData.careerGoals.longTermGoals.targetDate}
-								onChange={handleDateChange}
-								placeholder="DD/MM/YYYY"
-								className="w-full p-2 border rounded-md shadow-sm"
-							/>
-						</div>
-						<button
-							onClick={() => toggleEditMode('careerGoals')}
-							className="bg-green-600 text-white px-4 py-2 rounded-md shadow mt-4 hover:bg-green-800 transition-colors"
-						>
-							Cancel
-						</button>
-						<button
-							onClick={() => handleSave('careerGoals')}
-							className="bg-green-600 text-white px-4 py-2 rounded-md shadow mt-2 ml-2 hover:bg-green-800 transition-colors"
-						>
-							Save
-						</button>
-					</>
-				) : (
-					<>
-						<div className="p-2 border rounded-md shadow-sm bg-gray-100 mb-4">
-							<p>
-								<strong>Short-Term Goals:</strong> {formData.careerGoals.shortTermGoals.description}
-								<br />
-								<strong>Target Completion Date:</strong> {formData.careerGoals.shortTermGoals.targetDate}
-							</p>
-							<p>
-								<strong>Long-Term Goals:</strong> {formData.careerGoals.longTermGoals.description}
-								<br />
-								<strong>Target Completion Date:</strong> {formData.careerGoals.longTermGoals.targetDate}
-							</p>
-						</div>
-						<button
-							onClick={() => toggleEditMode('careerGoals')}
-							className="bg-green-600 text-white px-4 py-2 rounded-md shadow mt-4 hover:bg-green-800 transition-colors"
-						>
-							Edit
-						</button>
-					</>
-				)}
-			</div>
-
-			{/* Additional Information */}
-			<div className="mb-6">
-				<h2 className="text-xl font-semibold mb-4">Additional Information</h2>
-				{editMode.additionalInfo ? (
-					<>
-						<div className="mb-4">
-							<label className="block text-sm font-medium mb-1">Extracurricular Activities</label>
-							<textarea
-								name="additionalInfo.extracurricularActivities"
-								value={formData.additionalInfo.extracurricularActivities}
-								onChange={handleChange}
-								className="w-full p-2 border rounded-md shadow-sm"
-							/>
-						</div>
-						<div className="mb-4">
-							<label className="block text-sm font-medium mb-1">Hobbies and Interests</label>
-							<textarea
-								name="additionalInfo.hobbiesAndInterests"
-								value={formData.additionalInfo.hobbiesAndInterests}
-								onChange={handleChange}
-								className="w-full p-2 border rounded-md shadow-sm"
-							/>
-						</div>
-						<div className="mb-4">
-							<label className="block text-sm font-medium mb-1">Academic Achievements</label>
-							<textarea
-								name="additionalInfo.academicAchievements"
-								value={formData.additionalInfo.academicAchievements}
-								onChange={handleChange}
-								className="w-full p-2 border rounded-md shadow-sm"
-							/>
-						</div>
-						<button
-							onClick={() => toggleEditMode('additionalInfo')}
-							className="bg-green-600 text-white px-4 py-2 rounded-md shadow mt-4 hover:bg-green-800 transition-colors"
-						>
-							Cancel
-						</button>
-						<button
-							onClick={() => handleSave('additionalInfo')}
-							className="bg-green-600 text-white px-4 py-2 rounded-md shadow mt-2 ml-2 hover:bg-green-800 transition-colors"
-						>
-							Save
-						</button>
-					</>
-				) : (
-					<>
-						<div className="p-2 border rounded-md shadow-sm bg-gray-100 mb-4">
-							<p><strong>Extracurricular Activities:</strong> {formData.additionalInfo.extracurricularActivities}</p>
-							<p><strong>Hobbies and Interests:</strong> {formData.additionalInfo.hobbiesAndInterests}</p>
-							<p><strong>Academic Achievements:</strong> {formData.additionalInfo.academicAchievements}</p>
-						</div>
-						<button
-							onClick={() => toggleEditMode('additionalInfo')}
-							className="bg-green-600 text-white px-4 py-2 rounded-md shadow mt-4 hover:bg-green-800 transition-colors"
+							onClick={() => toggleEditMode('grade')}
+							className="bg-blue-600 text-white px-4 py-2 rounded-md shadow mt-4 hover:bg-blue-800 transition-colors"
 						>
 							Edit
 						</button>

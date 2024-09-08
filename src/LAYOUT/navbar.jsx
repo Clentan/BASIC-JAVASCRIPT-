@@ -52,14 +52,15 @@ export default function Navbar() {
 								}}
 								className="transition-transform"
 								description={user.username}
-								name={`${user.name}(${currentUser?.activity.points})`}
+								name={`${user.firstName} ${user.surname} (${currentUser?.activity.points})`}
+
 
 							/>
 						</DropdownTrigger>
 						<DropdownMenu aria-label="User Actions" variant="flat">
 							<DropdownItem key="profile" className="h-14 gap-2">
 								<p className="font-bold">Signed in as</p>
-								<p className="font-bold">{user.username}</p>
+								<p className="font-bold"> {` ${user.username}  (${currentUser?.activity.points})`}</p>
 							</DropdownItem>
 							<DropdownItem onClick={() => navigate("/profile")} key="configurations">
 								Profile
@@ -72,6 +73,6 @@ export default function Navbar() {
 
 				</div>
 			</div>
-		</div>
+		</div >
 	)
 }

@@ -3,6 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import Sidebar from "./sidebar";
 import Navbar from "./navbar";
 import { useAuth } from "../PROVIDERS/DataProvider";
+import Thuso from "../PAGES/THUSO/thuso";
 
 const Layout = () => {
 
@@ -30,6 +31,7 @@ const Layout = () => {
 					<Outlet />
 				</main>
 			</div>
+			<Thuso />
 		</div>
 	);
 };

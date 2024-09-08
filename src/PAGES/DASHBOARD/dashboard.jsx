@@ -5,8 +5,13 @@ import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import Chart from './chart.jsx'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import { useAuth } from "../../PROVIDERS/DataProvider.jsx";
 
 export default function Dashboard() {
+
+	const { currentUser } = useAuth()
+	const user = currentUser.personalInfo
+
 
 	const [leaderboardData, setLeaderboardData] = useState([]);
 
@@ -24,7 +29,7 @@ export default function Dashboard() {
 				// Assuming the points are under user.activity.points
 				const sortedUsers = users
 					.map(user => ({
-						username: user.username,
+						username: user.personalInfo?.username,
 						points: user.activity?.points || 0,
 					}))
 					.sort((a, b) => b.points - a.points);
@@ -44,12 +49,16 @@ export default function Dashboard() {
 	useEffect(() => {
 		getLeaderboard()
 	}, []);
+
+
+
+	const hours = new Date().getHours();
 	return (
 		<>
 			<section>
 				<div>
 					<div className="py-3">
-						<p className="text-3xl">Good Evening, frankie.</p>
+						<p className="text-3xl text-typing"> <span>{hours < 12 ? 'Good Morning' : hours < 17 ? 'Good Day' : 'Good Evening'}</span>, {user.username}</p>
 						<p className="text-gray-400">Dashboard Overview</p>
 					</div>
 					<div className="cards flex gap-4">
