@@ -1,7 +1,49 @@
+
+
+import { db } from "../../DATABASE/firebase";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { useEffect, useState } from 'react';
 import Chart from './chart.jsx'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 
 export default function Dashboard() {
+
+	const [leaderboardData, setLeaderboardData] = useState([]);
+
+	const getLeaderboard = () => {
+		const users = [];
+		try {
+			const q = query(collection(db, "users")); // Adjust the collection name if needed
+			const unsubscribe = onSnapshot(q, (querySnapshot) => {
+				users.length = 0; // Clear the users array
+
+				querySnapshot.forEach((doc) => {
+					users.push(doc.data());
+				});
+
+				// Assuming the points are under user.activity.points
+				const sortedUsers = users
+					.map(user => ({
+						username: user.username,
+						points: user.activity?.points || 0,
+					}))
+					.sort((a, b) => b.points - a.points);
+
+				setLeaderboardData(sortedUsers);
+			});
+
+			// Cleanup subscription on component unmount
+			return () => unsubscribe();
+		} catch (error) {
+			console.error("Error fetching leaderboard data:", error);
+		}
+	};
+
+
+
+	useEffect(() => {
+		getLeaderboard()
+	}, []);
 	return (
 		<>
 			<section>
@@ -105,63 +147,20 @@ export default function Dashboard() {
 				</div>
 				<div className="w-[20dvw] absolute translate-x-[46rem] top-0 translate-y-[25dvh]">
 					<p> Leaderboard </p>
-					<Table aria-label="Example static collection table ">
+					<Table aria-label="Leaderboard table">
 						<TableHeader>
 							<TableColumn>Rank</TableColumn>
 							<TableColumn>Name</TableColumn>
 							<TableColumn>Scores</TableColumn>
 						</TableHeader>
 						<TableBody>
-							<TableRow key="1">
-								<TableCell>1</TableCell>
-								<TableCell>Frakie</TableCell>
-								<TableCell>230</TableCell>
-							</TableRow>
-							<TableRow key="2">
-								<TableCell>2</TableCell>
-								<TableCell>Scott</TableCell>
-								<TableCell>200</TableCell>
-							</TableRow>
-							<TableRow key="3">
-								<TableCell>3</TableCell>
-								<TableCell>Linux</TableCell>
-								<TableCell>100</TableCell>
-							</TableRow>
-							<TableRow key="4">
-								<TableCell>4</TableCell>
-								<TableCell>John</TableCell>
-								<TableCell>90</TableCell>
-							</TableRow>
-							<TableRow key="5">
-								<TableCell>4</TableCell>
-								<TableCell>John</TableCell>
-								<TableCell>90</TableCell>
-							</TableRow>
-							<TableRow key="6">
-								<TableCell>4</TableCell>
-								<TableCell>John</TableCell>
-								<TableCell>90</TableCell>
-							</TableRow>
-							<TableRow key="7">
-								<TableCell>4</TableCell>
-								<TableCell>John</TableCell>
-								<TableCell>90</TableCell>
-							</TableRow>
-							<TableRow key="8">
-								<TableCell>4</TableCell>
-								<TableCell>John</TableCell>
-								<TableCell>90</TableCell>
-							</TableRow>
-							<TableRow key="9">
-								<TableCell>4</TableCell>
-								<TableCell>John</TableCell>
-								<TableCell>90</TableCell>
-							</TableRow>
-							<TableRow key="10">
-								<TableCell>4</TableCell>
-								<TableCell>John</TableCell>
-								<TableCell>90</TableCell>
-							</TableRow>
+							{leaderboardData.map((user, index) => (
+								<TableRow key={index}>
+									<TableCell>{index + 1}</TableCell>
+									<TableCell>{user.username}</TableCell>
+									<TableCell>{user.points}</TableCell>
+								</TableRow>
+							))}
 						</TableBody>
 					</Table>
 				</div>

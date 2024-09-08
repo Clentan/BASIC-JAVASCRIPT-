@@ -1,54 +1,33 @@
 
+
+import { arrayUnion, collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-
-const CurrentUser = {
-	personalInfo: {
-		firstName: "John",
-		surname: "Doe",
-		email: "john.doe@example.com",
-		avatar: "https://example.com/avatar.jpg",
-		role: "student",
-	},
-};
+import { useAuth } from "../../PROVIDERS/DataProvider";
+import { db } from "../../DATABASE/firebase";
 
 export default function Forum() {
 	const { id } = useParams();
-	const user = CurrentUser.personalInfo;
+	const { currentUser } = useAuth();
+	const user = currentUser
 	const [forum, setForum] = useState(null);
 	const [posts, setPosts] = useState([]);
 	const [newMessage, setNewMessage] = useState("");
 	const chatContainerRef = useRef(null);
 
-	// Mock forum data
-	const mockForums = [
-		{
-			id: "1",
-			name: "Mathematics Discussion",
-			description: "Discuss all things related to mathematics.",
-			posts: [
-				{ id: "101", user: "John Doe", content: "What is the quadratic formula?" },
-				{ id: "102", user: "Jane Smith", content: "It's x = (-b ± √(b² - 4ac)) / 2a." },
-			],
-		},
-		{
-			id: "2",
-			name: "Science Help",
-			description: "A place to talk about science subjects.",
-			posts: [
-				{ id: "201", user: "Mark Taylor", content: "What’s the difference between speed and velocity?" },
-				{ id: "202", user: "Alice Johnson", content: "Velocity includes direction, speed doesn’t." },
-			],
-		},
-	];
-
 	useEffect(() => {
-		// Simulate fetching forum from mock data by ID
-		const foundForum = mockForums.find((forum) => forum.id === id);
-		if (foundForum) {
-			setForum(foundForum);
-			setPosts(foundForum.posts || []);
-		}
+		const docRef = doc(db, "forums", id);
+
+		const unsubscribe = onSnapshot(docRef, (docSnap) => {
+			if (docSnap.exists()) {
+				const data = docSnap.data();
+				setForum(data);
+				setPosts(data.posts || []);
+			}
+		});
+
+		// Cleanup on unmount
+		return () => unsubscribe();
 	}, [id]);
 
 	useEffect(() => {
@@ -57,25 +36,32 @@ export default function Forum() {
 		}
 	}, [posts]);
 
-	const handleSendMessage = () => {
+	const handleSendMessage = async () => {
 		if (newMessage.trim()) {
 			const newPost = {
-				id: Date.now().toString(), // Unique ID for each post
-				user: `${user.firstName} ${user.surname}`,
+				id: Date.now(), // Unique ID for each post
+				user: `${user.name}`,
 				content: newMessage,
 			};
 
-			setPosts((prevPosts) => [...prevPosts, newPost]);
-			setNewMessage("");
+			const postRef = doc(db, "forums", id);
+			await updateDoc(postRef, {
+				posts: arrayUnion(newPost)
+			});
 
-			if (chatContainerRef.current) {
-				chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-			}
+			setNewMessage("");
+		}
+	};
+
+	const handleSendMessageAndScroll = () => {
+		handleSendMessage();
+		if (chatContainerRef.current) {
+			chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
 		}
 	};
 
 	if (!forum) {
-		return <div>Loading...</div>;
+		return <div>loading</div>;
 	}
 
 	return (
@@ -90,13 +76,9 @@ export default function Forum() {
 				{posts.map((post) => (
 					<div
 						key={post.id}
-						className={`mb-2 rounded flex ${post.user === `${user.firstName} ${user.surname}` ? "justify-end" : "justify-start"
-							}`}
+						className={`mb-2 rounded flex ${post.user === `${user.name}` ? "justify-end" : "justify-start"}`}
 					>
-						<div
-							className={`max-w-xs p-2 ${post.user === `${user.firstName} ${user.surname}` ? "bg-blue-100" : "bg-gray-100"
-								}`}
-						>
+						<div className={`max-w-xs p-2 ${post.user === `${user.name}` ? "bg-blue-100" : "bg-gray-100"}`}>
 							<p className="font-semibold">{post.user}:</p>
 							<p>{post.content}</p>
 						</div>
@@ -112,8 +94,9 @@ export default function Forum() {
 					className="flex-1 p-2 border rounded shadow-sm"
 				/>
 				<button
-					onClick={handleSendMessage}
-					className="bg-mygreen text-white px-4 py-2 rounded shadow hover:bg-green-800 transition-colors"
+					onClick={handleSendMessageAndScroll}
+					className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-800 transition-colors"
+
 				>
 					Send
 				</button>

@@ -12,6 +12,9 @@ import LandingPage from "./PAGES/AUTH/landingpage";
 import SignIn from "./PAGES/AUTH/signin";
 import SignUp from "./PAGES/AUTH/signup";
 import { AuthProvider } from "./PROVIDERS/DataProvider";
+import AddForum from "./PAGES/FORUMS/addForum";
+import Challanges from "./PAGES/ACTIVITY/challanges";
+import Profile from "./PAGES/PROFILE/profile";
 
 function App() {
   return (
@@ -27,8 +30,11 @@ function App() {
             <Route path="/subjects" element={<Subjects />} />
             <Route path="/forums" element={<Forums />} />
             <Route path="/forums/:id" element={<Forum />} />
+            <Route path="/addforum" element={<AddForum />} />
             <Route path="/activity" element={<Activity />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/activity/quiz/:subject" element={<Quiz />} />
+            <Route path="/activity/practicequiz/:subject/:topic" element={<Challanges />} />
           </Route>
         </Routes>
       </BrowserRouter>

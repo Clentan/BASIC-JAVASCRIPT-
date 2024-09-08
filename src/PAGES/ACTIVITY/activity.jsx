@@ -1,92 +1,198 @@
 
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { db } from "../../DATABASE/firebase";
 
 export default function Activity() {
-	const subjects = ["math", "science", "history", "literature", "geology"];
+	const subjects = ["Math", "Science", "History", "Literature", "Geology"];
+	const [selectedSubject, setSelectedSubject] = useState(null);
+	const [customTopic, setCustomTopic] = useState("");
 
-	const colors = ['#0056b3', '#004494', '#003d79', '#007bff', '#66aaff'];
+
+	// Mock topics for each subject
+	const topics = {
+		Math: ["Algebra", "Geometry", "Calculus"],
+		Science: ["Physics", "Chemistry", "Biology"],
+		// Add topics for other subjects...
+	};
+
+	const [leaderboardData, setLeaderboardData] = useState([]);
+
+	const getLeaderboard = () => {
+		const users = [];
+		try {
+			const q = query(collection(db, "users")); // Adjust the collection name if needed
+			const unsubscribe = onSnapshot(q, (querySnapshot) => {
+				users.length = 0; // Clear the users array
+
+				querySnapshot.forEach((doc) => {
+					users.push(doc.data());
+				});
+
+				// Assuming the points are under user.activity.points
+				const sortedUsers = users
+					.map(user => ({
+						username: user?.personalInfo?.username,
+						points: user.activity?.points || 0,
+					}))
+					.sort((a, b) => b.points - a.points);
+
+				setLeaderboardData(sortedUsers);
+			});
+
+			// Cleanup subscription on component unmount
+			return () => unsubscribe();
+		} catch (error) {
+			console.error("Error fetching leaderboard data:", error);
+		}
+	};
+
+
+	useEffect(() => {
+		getLeaderboard()
+	}, []);
+
 
 	return (
-		<div className="">
+		<div className="bg-white ">
 			{/* Heading */}
-			<div className="pb-6">
-				<h1 className="text-4xl font-bold text-[#0056b3]">Activities</h1>
-				<p className="mt-2 text-gray-700">Attempt Quizzes and Challenge Your Friends</p>
+			{/* Daily Quiz 
+			<div className="mb-8 bg-white shadow-lg p-6 rounded-lg">
+				<h2 className="text-2xl font-bold text-[#0056b3]">Daily Quiz</h2>
+				<p className="mt-2 text-gray-600">Test your knowledge with today’s quiz and improve your skills!</p>
+				<Link to="/daily-quiz">
+					<button className="mt-4 px-6 py-3 bg-[#0056b3] text-white rounded-lg hover:bg-[#003d79]">
+						Take Today’s Quiz
+					</button>
+				</Link>
 			</div>
+			*/}
 
 			{/* Quiz Categories */}
-			<div className="bg-white rounded-lg divide-y divide-gray-200">
-				<div className="p-6">
-					<h2 className="text-2xl font-bold text-[#0056b3]">Quiz Categories</h2>
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-						{subjects.map((subject, index) => {
-							const bgColor = colors[index % colors.length];
-							const hoverColor = colors[(index + 1) % colors.length];
-							return (
-								<Link to={`quiz/${subject}`} key={subject}>
-									<div
-										className="text-white rounded-lg p-6 cursor-pointer"
-										style={{ backgroundColor: bgColor, transition: 'background-color 0.3s' }}
-										onMouseEnter={(e) => e.currentTarget.style.backgroundColor = hoverColor}
-										onMouseLeave={(e) => e.currentTarget.style.backgroundColor = bgColor}
-									>
-										<h3 className="text-lg font-semibold">{subject}</h3>
-										<p className="mt-2">Attempt quizzes and improve your skills.</p>
-									</div>
-								</Link>
-							);
-						})}
-					</div>
-				</div>
+			<div className="mb-8 bg-white shadow-lg p-6 rounded-lg">
+				<h2 className="text-2xl font-bold text-[#0056b3]">Practice Quizzes</h2>
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+					{subjects.map((subject, index) => (
+						<div
+							key={index}
 
-				{/* Challenge Section */}
-				<div className="p-6">
-					<h2 className="text-2xl font-bold text-[#0056b3]">Challenge a Friend</h2>
-					<div className="flex flex-col sm:flex-row sm:justify-between mt-6">
-						<div className="flex-1 mb-4 sm:mb-0">
-							<input
-								type="text"
-								placeholder="Enter friend's username"
-								className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
-							/>
+							className="text-white rounded-lg p-6 cursor-pointer"
+							style={{ backgroundColor: '#0056b3' }}
+							onClick={() => setSelectedSubject(subject)} // Set subject on click
+						>
+							<h3 className="text-lg font-semibold">{subject}</h3>
 						</div>
-						<button className="px-6 py-3 bg-[#0056b3] text-white rounded-lg hover:bg-[#003d79]">
-							Send Challenge
-						</button>
-					</div>
-					<p className="text-gray-600 mt-2">Challenge a friend to see who scores the highest on quizzes.</p>
-				</div>
-
-				{/* Leaderboard */}
-				<div className="p-6">
-					<h2 className="text-2xl font-bold text-[#0056b3]">Leaderboard</h2>
-					<div className="mt-6">
-						<table className="min-w-full table-auto bg-white rounded-lg overflow-hidden shadow-lg">
-							<thead className="bg-[#0056b3]">
-								<tr>
-									<th className="px-4 py-2 text-white text-left">Rank</th>
-									<th className="px-4 py-2 text-white text-left">Username</th>
-									<th className="px-4 py-2 text-white text-left">Points</th>
-								</tr>
-							</thead>
-							<tbody>
-								{[
-									{ rank: 1, username: 'Alice', points: 2000 },
-									{ rank: 2, username: 'Bob', points: 1750 },
-									{ rank: 3, username: 'Charlie', points: 1600 },
-								].map(({ rank, username, points }) => (
-									<tr key={username} className="border-t border-gray-200">
-										<td className="px-4 py-2 text-gray-800">{rank}</td>
-										<td className="px-4 py-2 text-gray-800">{username}</td>
-										<td className="px-4 py-2 text-gray-800">{points}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
+					))}
 				</div>
 			</div>
-		</div>
+
+
+			{/* Challenge a Friend */}
+			<div className="mb-8 bg-white shadow-lg p-6 rounded-lg">
+				<h2 className="text-2xl font-bold text-[#0056b3]">Challenge a Friend</h2>
+				<p className="mt-2 text-gray-600">Send a challenge to your friends and see who scores the highest!</p>
+				<div className="flex flex-col sm:flex-row sm:justify-between mt-6">
+					<input
+						type="text"
+						placeholder="Enter friend's username"
+						className="w-full sm:w-2/3 p-3 mb-4 sm:mb-0 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0056b3]"
+					/>
+					<button className="px-6 py-3 bg-[#0056b3] text-white rounded-lg hover:bg-[#003d79]">
+						Send Challenge
+					</button>
+				</div>
+			</div>
+
+			{/* Leaderboard */}
+			<div className="mb-8 bg-white shadow-lg p-6 rounded-lg">
+				<h2 className="text-2xl font-bold text-[#0056b3]">Leaderboard</h2>
+				<p className="mt-2 text-gray-600">See the top performers on the leaderboard.</p>
+				<div className="mt-6">
+					<table className="min-w-full table-auto bg-white rounded-lg shadow-lg">
+						<thead className="bg-[#0056b3]">
+							<tr>
+								<th className="px-4 py-2 text-white text-left">Rank</th>
+								<th className="px-4 py-2 text-white text-left">Username</th>
+								<th className="px-4 py-2 text-white text-left">Points</th>
+							</tr>
+						</thead>
+						<tbody>
+							{leaderboardData.map((user, index) => (
+								<tr key={user.username} className="border-t border-gray-200">
+									<td className="px-4 py-2 text-gray-800">{index + 1}</td>
+									<td className="px-4 py-2 text-gray-800">{user.username}</td>
+									<td className="px-4 py-2 text-gray-800">{user.points}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			{/* Popup */}
+			{selectedSubject && (
+				<div className="fixed z-50 inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+					<div className="bg-white p-6 rounded-lg shadow-lg w-96">
+						<h3 className="text-2xl font-bold text-[#0056b3]">{selectedSubject} Topics</h3>
+
+						{/* List of topics */}
+						<div className="mt-4">
+							{topics[selectedSubject]?.map((topic) => (
+								<div key={topic} className="py-2">
+									<label className="text-gray-700">
+										<input
+											type="radio"
+											name="topic"
+											value={topic}
+											className="mr-2"
+											onChange={(e) => setCustomTopic(e.target.value)}
+										/>
+										{topic}
+									</label>
+								</div>
+							))}
+						</div>
+
+						{/* Custom topic input */}
+						<div className="mt-4">
+							<input
+								type="text"
+								placeholder="Enter your custom topic"
+								className="w-full p-2 border border-gray-300 rounded-lg"
+								value={customTopic}
+								onChange={(e) => setCustomTopic(e.target.value)}
+							/>
+						</div>
+
+						{/* Buttons */}
+						<div className="mt-6 flex justify-between">
+							<Link
+								to={`practicequiz/${selectedSubject.toLowerCase()}/${customTopic && customTopic.trim() !== "" ? customTopic.toLowerCase() : selectedSubject.toLowerCase()}`}
+							>
+								<button
+									className="px-4 py-2 bg-[#0056b3] text-white rounded-lg"
+									onClick={() => console.log(`Selected: ${selectedSubject}, Custom Topic: ${customTopic}`)}
+								>
+									Start Quiz
+								</button>
+							</Link>
+							<button
+								className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg"
+								onClick={() => setSelectedSubject(null)} // Close popup
+							>
+								Cancel
+							</button>
+						</div>
+
+
+
+
+					</div>
+				</div>
+			)
+			}
+		</div >
 	);
 }
 

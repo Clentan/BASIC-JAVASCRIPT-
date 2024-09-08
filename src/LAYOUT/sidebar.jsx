@@ -21,13 +21,12 @@ export default function Sidebar() {
 			<ul className="px-2 ">
 				<Link to="/">
 					<li className={`flex gap-2 py-2 px-2 rounded-md ${pathname == "/" ? "bg-[#0496ff] text-white shadowed-btn" : "text-gray-700 hover:text-green-600"} `}>
-
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 24 24"
 							width={20}
 							height={20}
-							color={DashboardIcon}
+							color="black"
 							fill={"none"}
 						>
 							<path

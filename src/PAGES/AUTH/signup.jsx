@@ -6,6 +6,7 @@ import {
 import { doc, setDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../../DATABASE/firebase";
+import Activity from "../ACTIVITY/activity";
 
 
 export default function SignUp() {
@@ -34,13 +35,17 @@ export default function SignUp() {
 				// Add user data to Firestore users collection with user ID
 				const userRef = doc(db, "users", userId); // Specify the collection reference and document ID separately
 				return setDoc(userRef, {
-					email,
-					name,
-					username,
-					password,
-					userId,
+					personalInfo: {
+						email,
+						name,
+						username,
+						password,
+						userId,
+					},
+					activity: { points: 5 },
 				});
 			})
+
 			.then(() => {
 				// Automatic sign-in after successful account creation
 				return signInWithEmailAndPassword(auth, email, password).then(

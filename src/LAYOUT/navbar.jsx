@@ -6,7 +6,7 @@ import {
 	Avatar,
 	User,
 } from "@nextui-org/react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { auth } from "../DATABASE/firebase";
 import { signOut } from "firebase/auth";
 import { useAuth } from "../PROVIDERS/DataProvider";
@@ -25,19 +25,24 @@ const handleLogOut = () => {
 
 
 
+
+
+
+
+
 export default function Navbar() {
+	const navigate = useNavigate();
 
 	const { currentUser, loading } = useAuth();
-
+	const user = currentUser.personalInfo
 
 
 	return (
-		<div className="fixed bg-white  top-0 left-0 right-0  p-4   rounded w-full ">
-
+		<div className="fixed bg-white border-b  top-0 left-0 right-0  p-4   rounded w-full ">
 
 			<div className="flex justify-end">
 				<div>
-					<Dropdown placement="bottom-start">
+					<Dropdown placement="bottom-start ">
 						<DropdownTrigger>
 							<User
 								as="button"
@@ -46,30 +51,25 @@ export default function Navbar() {
 									src: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
 								}}
 								className="transition-transform"
-								description={currentUser.username}
-								name={currentUser.name}
+								description={user.username}
+								name={`${user.name}(${currentUser?.activity.points})`}
 
 							/>
 						</DropdownTrigger>
 						<DropdownMenu aria-label="User Actions" variant="flat">
 							<DropdownItem key="profile" className="h-14 gap-2">
 								<p className="font-bold">Signed in as</p>
-								<p className="font-bold">{currentUser.username}</p>
-
+								<p className="font-bold">{user.username}</p>
 							</DropdownItem>
-							<DropdownItem key="settings">My Settings</DropdownItem>
-							<DropdownItem key="team_settings">Team Settings</DropdownItem>
-							<DropdownItem key="analytics">Analytics</DropdownItem>
-							<DropdownItem key="system">System</DropdownItem>
-							<DropdownItem key="configurations">Configurations</DropdownItem>
-							<DropdownItem key="help_and_feedback">
-								Help & Feedback
+							<DropdownItem onClick={() => navigate("/profile")} key="configurations">
+								Profile
 							</DropdownItem>
 							<DropdownItem onClick={handleLogOut} key="logout" color="danger">
 								Log Out
 							</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
+
 				</div>
 			</div>
 		</div>
